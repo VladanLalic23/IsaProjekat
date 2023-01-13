@@ -1,6 +1,8 @@
 package ftn.IsaProjekat.model.users;
 
 public enum Role {
-    ADMIN,DONOR,CLINICADMIN;
+    ROLE_ADMIN,
+    ROLE_DONOR,
+    ROLE_CLINICADMIN;
     
 }

@@ -1,18 +1,28 @@
 package ftn.IsaProjekat.model.users;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-public class User {
+public class User implements UserDetails {
 
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,8 +64,8 @@ public class User {
     @Column(name="info")
     private String info;
 
-    @Column(name = "jbmg")
-    private Long jbmg;
+    @Column(name = "jmbg")
+    private Long jmbg;
 
     @Column(name = "last_password_reset_date")
 	private Timestamp lastPasswordResetDate;
@@ -63,12 +73,16 @@ public class User {
     @Embedded
 	private Address address;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
+	private List<Authority> authorities;
+
 
     public User() {
     }
 
 
-    public User(Long id, Role role, String email, String password, String name, String surname, boolean isActivated, boolean initialPasswordChanged, Gender gender, String phone, String profession, String info, Long jbmg, Timestamp lastPasswordResetDate, Address address) {
+    public User(Long id, Role role, String email, String password, String name, String surname, boolean isActivated, boolean initialPasswordChanged, Gender gender, String phone, String profession, String info, Long jmbg, Timestamp lastPasswordResetDate, Address address) {
         this.id = id;
         this.role = role;
         this.email = email;
@@ -81,7 +95,7 @@ public class User {
         this.phone = phone;
         this.profession = profession;
         this.info = info;
-        this.jbmg = jbmg;
+        this.jmbg = jmbg;
         this.lastPasswordResetDate = lastPasswordResetDate;
         this.address = address;
     }
@@ -193,13 +207,7 @@ public class User {
         this.info = info;
     }
 
-    public Long getJbmg() {
-        return this.jbmg;
-    }
 
-    public void setJbmg(Long jbmg) {
-        this.jbmg = jbmg;
-    }
 
     public Timestamp getLastPasswordResetDate() {
         return this.lastPasswordResetDate;
@@ -217,5 +225,52 @@ public class User {
 		this.address = address;
 	}
 
+
+
+    @Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Collection<Authority> authorities = new ArrayList<>();
+        Authority authority = new Authority();
+        authority.setName(role.name());
+        authorities.add(authority);
+        return authorities;
+	}
+
+    public Long getJmbg() {
+        return this.jmbg;
+    }
+
+    public void setJmbg(Long jmbg) {
+        this.jmbg = jmbg;
+    }
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+
+    @Override
+	public String getUsername() {
+		return email;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+    @Override
+	public boolean isEnabled() {
+		return isActivated;
+	}
     
 }
