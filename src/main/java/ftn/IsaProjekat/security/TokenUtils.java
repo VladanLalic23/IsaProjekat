@@ -33,7 +33,7 @@ public class TokenUtils {
 	private static final String AUDIENCE_TABLET = "tablet";
 
 	private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
-
+ 
     	//Generisanje JWT Tokena
 	public String generateToken(User user) {
 		return Jwts.builder()
@@ -75,7 +75,7 @@ public class TokenUtils {
 		return (!(this.isCreatedBeforeLastPasswordReset(created, lastPasswordReset))
 				&& (!(this.isTokenExpired(token)) || this.ignoreTokenExpiration(token)));
 	}
-	
+	 
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		User user = (User) userDetails;
 		final String email = getEmailFromToken(token);
