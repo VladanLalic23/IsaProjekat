@@ -1,6 +1,5 @@
 package ftn.IsaProjekat.model.clinic;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,15 +11,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import ftn.IsaProjekat.model.users.Address;
 import ftn.IsaProjekat.model.users.ClinicAdmin;
 
 @Entity
+@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
+@Table(name="clinic")
+
 public class Clinic {
 
     @Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pharmacy_gen")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	 
 	@Column(name = "name", nullable = false)
@@ -35,8 +42,10 @@ public class Clinic {
     @Embedded
 	private Address address;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<ClinicAdmin> clinicAdmins = new HashSet<ClinicAdmin>();
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<ClinicAdmin> clinicAdmins;
 
 
     public Clinic() {
@@ -92,13 +101,12 @@ public class Clinic {
     public void setAddress(Address address) {
         this.address = address;
     }
-
-    public Set<ClinicAdmin> getClinicAdmins() {
+     public Set<ClinicAdmin> getClinicAdmins() {
         return this.clinicAdmins;
     }
 
-    public void setClinicAdmins(Set<ClinicAdmin> clinicAdmins) {
-        this.clinicAdmins = clinicAdmins;
+    public void setClinicAdmins(Set<ClinicAdmin> workers) {
+        this.clinicAdmins = workers;
     }
 
 

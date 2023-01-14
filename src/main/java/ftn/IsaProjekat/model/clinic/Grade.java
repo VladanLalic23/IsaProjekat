@@ -8,14 +8,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import ftn.IsaProjekat.model.users.Donor;
 
 @Entity
+@Table(name="grade")
+
 public class Grade {
 
     @Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "grade_gen")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
 	
@@ -31,7 +34,7 @@ public class Grade {
 
     public Grade() {
     }
-
+ 
     public Grade(long id, Donor donor, long gradedId, int grade) {
         super();
         this.id = id;

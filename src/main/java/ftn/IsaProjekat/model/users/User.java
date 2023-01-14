@@ -14,35 +14,42 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
+@Table(name="users")
+@Inheritance(strategy=InheritanceType.JOINED)
+
 public class User implements UserDetails {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
 	private Long id;
 
 	@Column(name = "role", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Role role;
     
-    @Column(name="email", unique = true)
+    @Column(name="email", unique = true , updatable = false, nullable = false)
     private String email;
     
-    @Column(name="password")
+    @Column(name="password",nullable = false)
     private String password;
 
-    @Column(name="name")
+    @Column(name="name", nullable = false)
     private String name;
 
-    @Column(name="surname")
+    @Column(name="surname",nullable = false)
     private String surname;
 
     @Column(name = "isActivated", nullable = false)
@@ -51,21 +58,21 @@ public class User implements UserDetails {
     @Column(name = "initialPasswordChanged", nullable = false)
 	private boolean initialPasswordChanged;
 
-    @Column(name = "gender")
+    @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
 	private Gender gender;
 
-    @Column (name="phone") 
+    @Column (name="phone",nullable = false) 
     private String phone;
 
-    @Column(name="profession")
+    @Column(name="profession",nullable = false)
     private String profession;
 
-    @Column(name="info")
+    @Column(name="info",nullable = false)
     private String info;
 
-    @Column(name = "jmbg")
-    private Long jmbg;
+    @Column(name = "jmbg",nullable = false,unique = true)
+    private String jmbg;
 
     @Column(name = "last_password_reset_date")
 	private Timestamp lastPasswordResetDate;
@@ -82,7 +89,7 @@ public class User implements UserDetails {
     }
 
 
-    public User(Long id, Role role, String email, String password, String name, String surname, boolean isActivated, boolean initialPasswordChanged, Gender gender, String phone, String profession, String info, Long jmbg, Timestamp lastPasswordResetDate, Address address) {
+    public User(Long id, Role role, String email, String password, String name, String surname, boolean isActivated, boolean initialPasswordChanged, Gender gender, String phone, String profession, String info, String jmbg, Timestamp lastPasswordResetDate, Address address) {
         this.id = id;
         this.role = role;
         this.email = email;
@@ -236,11 +243,11 @@ public class User implements UserDetails {
         return authorities;
 	}
 
-    public Long getJmbg() {
+    public String getJmbg() {
         return this.jmbg;
     }
 
-    public void setJmbg(Long jmbg) {
+    public void setJmbg(String jmbg) {
         this.jmbg = jmbg;
     }
     public void setAuthorities(List<Authority> authorities) {
@@ -272,5 +279,6 @@ public class User implements UserDetails {
 	public boolean isEnabled() {
 		return isActivated;
 	}
+
     
 }
