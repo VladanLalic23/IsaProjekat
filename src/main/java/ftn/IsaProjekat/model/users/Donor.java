@@ -9,32 +9,34 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import ftn.IsaProjekat.model.clinic.Clinic;
+import ftn.IsaProjekat.model.clinic.Appointment;
 
 @Entity
-@Table(name="donors")
+@Table(name = "donors")
 
 public class Donor extends User {
 
     @Column(name = "loyaltyPoints")
-	private int loyaltyPoints;
-	
-	@Column(name = "penaltyPoints")
-	private int penaltyPoints;
-    
-	@Enumerated(EnumType.STRING)
-	private DonorCategory donorCategory;
+    private int loyaltyPoints;
+
+    @Column(name = "penaltyPoints")
+    private int penaltyPoints;
+
+    @Enumerated(EnumType.STRING)
+    private DonorCategory donorCategory;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Clinic> clinics;
+    private Set<Clinic> clinics;
 
+    @OneToMany(mappedBy = "donor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Appointment> appointments;
 
     public Donor() {
     }
-
-    
 
     public int getLoyaltyPoints() {
         return this.loyaltyPoints;
@@ -59,6 +61,5 @@ public class Donor extends User {
     public void setDonorCategory(DonorCategory donorCategory) {
         this.donorCategory = donorCategory;
     }
-
 
 }

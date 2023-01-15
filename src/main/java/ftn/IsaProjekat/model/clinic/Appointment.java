@@ -1,12 +1,11 @@
 package ftn.IsaProjekat.model.clinic;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,34 +13,42 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+//import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import ftn.IsaProjekat.model.users.Donor;
 
 @Entity
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-@Table(name="appointment")
+// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+// property = "id")
+@Table(name = "appointments")
 
 public class Appointment {
 
     @Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    @Column(name = "time", nullable = false)
-    private Time time;
+    @Embedded
+    private TimeInterval timeInterval;
 
-    @Column(name = "date", nullable = false)
-    private Date date;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus type;
 
-    @Column(name = "isFree", nullable = false)
-	private Boolean isFree;
-	 
-	@JsonManagedReference
-    @ManyToOne( fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Donor> Donor;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Donor donor;
+
+    public Appointment() {
+    }
+
+    public Appointment(long id, TimeInterval timeInterval, AppointmentStatus type, Donor donor) {
+        this.id = id;
+        this.timeInterval = timeInterval;
+        this.type = type;
+        this.donor = donor;
+    }
 
     public long getId() {
         return id;
@@ -51,35 +58,24 @@ public class Appointment {
         this.id = id;
     }
 
-    public Time getTime() {
-        return time;
+    public void setDonor(Donor donor) {
+        donor = donor;
     }
 
-    public void setTime(Time time) {
-        this.time = time;
+    public TimeInterval getTimeInterval() {
+        return this.timeInterval;
     }
 
-    public Date getDate() {
-        return date;
+    public void setTimeInterval(TimeInterval timeInterval) {
+        this.timeInterval = timeInterval;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public AppointmentStatus getType() {
+        return this.type;
     }
 
-    public Boolean getIsFree() {
-        return isFree;
+    public void setType(AppointmentStatus type) {
+        this.type = type;
     }
 
-    public void setIsFree(Boolean isFree) {
-        this.isFree = isFree;
-    }
-
-    public Set<Donor> getDonor() {
-        return Donor;
-    }
-
-    public void setDonor(Set<Donor> donor) {
-        Donor = donor;
-    }
 }
