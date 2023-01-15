@@ -52,13 +52,13 @@ public class User implements UserDetails {
     @Column(name="surname",nullable = false)
     private String surname;
 
-    @Column(name = "isActivated", nullable = false)
+    @Column(name = "isActivated")
 	private boolean isActivated;
 
-    @Column(name = "initialPasswordChanged", nullable = false)
+    @Column(name = "initialPasswordChanged")
 	private boolean initialPasswordChanged;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender",nullable = false)
     @Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -71,7 +71,7 @@ public class User implements UserDetails {
     @Column(name="info",nullable = false)
     private String info;
 
-    @Column(name = "jmbg",nullable = false,unique = true)
+    @Column(name = "jmbg",unique = true,nullable = false)
     private String jmbg;
 
     @Column(name = "last_password_reset_date")

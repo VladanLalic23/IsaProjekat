@@ -55,5 +55,12 @@ public class DonorService implements DonorInterface {
 		emailService.sendConfirmationEmail(userRegistrationDTO, addedDonor.getId());
 		return addedDonor.getEmail();
 	}
+
+	@Override
+	public void activateDonorAccount(Long userId) {
+		User activeUser = userRepository.getById(userId);
+		activeUser.setIsActivated(true);
+		userRepository.save(activeUser);	
+	}
     
 }
