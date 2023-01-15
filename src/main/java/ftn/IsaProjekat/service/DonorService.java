@@ -62,5 +62,11 @@ public class DonorService implements DonorInterface {
 		activeUser.setIsActivated(true);
 		userRepository.save(activeUser);	
 	}
+
+	public Donor findDonor(String email) {
+		
+		return 	donorRepository.findByEmail(email);
+		
+	}
     
 }
