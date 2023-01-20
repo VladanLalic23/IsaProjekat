@@ -58,10 +58,14 @@ public class DonorService implements DonorInterface {
 
 	@Override
 	public void activateDonorAccount(Long userId) {
-		User activeUser = userRepository.getById(userId);
+		User activeUser = userRepository.getOne(userId);
 		activeUser.setIsActivated(true);
 		userRepository.save(activeUser);	
 	}
+	public Donor findById(long id) {
+		return donorRepository.findById(id).orElse(null);
+	}
+
 
 	public Donor findDonor(String email) {
 		

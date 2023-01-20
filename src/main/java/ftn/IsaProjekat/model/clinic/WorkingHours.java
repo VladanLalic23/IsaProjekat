@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import ftn.IsaProjekat.model.users.ClinicAdmin;
+import ftn.IsaProjekat.model.users.Staff;
 
 @Entity
 @Table(name = "workingHours")
@@ -30,7 +30,7 @@ public class WorkingHours {
     
 	@JsonManagedReference
 	@ManyToMany(mappedBy = "workingHours", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ClinicAdmin> staff;
+	private Set<Staff> staff;
 
     @Embedded
 	private TimeInterval timeInterval;
@@ -39,7 +39,7 @@ public class WorkingHours {
     public WorkingHours() {
     }
 
-    public WorkingHours(long id, Clinic clinic, Set<ClinicAdmin> staff, TimeInterval timeInterval) {
+    public WorkingHours(long id, Clinic clinic, Set<Staff> staff, TimeInterval timeInterval) {
         super();
         this.id = id;
         this.clinic = clinic;
@@ -63,11 +63,11 @@ public class WorkingHours {
         this.clinic = clinic;
     }
 
-    public Set<ClinicAdmin> getStaff() {
+    public Set<Staff> getStaff() {
         return this.staff;
     }
 
-    public void setStaff(Set<ClinicAdmin> staff) {
+    public void setStaff(Set<Staff> staff) {
         this.staff = staff;
     }
 

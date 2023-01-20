@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import ftn.IsaProjekat.dto.AppointmentSchedulingEmailDTO;
 import ftn.IsaProjekat.dto.UserRegistrationDTO;
 
 @Service
@@ -29,6 +30,21 @@ public class EmailService {
 		message.setSubject("Aktivacija racuna");
 		message.setText("Hello " + userRegistrationDTO.getName() + ", please activate " +
 						"your account by visiting this link: " + environment.getProperty("APP_SERVER") + "/auth/activate/" + String.valueOf(userId));
+		javaMailSender.send(message);
+		System.out.println("Poslao sam mejl!");
+	}
+
+
+	@Async
+	public void sendAppointmentScheduledNotification(AppointmentSchedulingEmailDTO appointmentSchedulingEmailDTO) {
+		System.out.println("SENDING EMAIL...");
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(appointmentSchedulingEmailDTO.getDonorEmail());
+		message.setFrom(environment.getProperty("spring.mail.username"));
+		message.setSubject("Appointment scheduling notification - Podrzi Zivot");
+		message.setText("Hello , you have successfully " +
+						"scheduled at: " + appointmentSchedulingEmailDTO.getClinicName() + ", "+ 
+						appointmentSchedulingEmailDTO.getClinicAdress() + ". Appointment start time: " + appointmentSchedulingEmailDTO.getStartTime());
 		javaMailSender.send(message);
 		System.out.println("Poslao sam mejl!");
 	}

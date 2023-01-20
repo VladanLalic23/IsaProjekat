@@ -1,6 +1,8 @@
 package ftn.IsaProjekat.model.clinic;
 
-import java.sql.Date;
+
+
+import java.util.Date;
 
 import javax.persistence.Embeddable;
 

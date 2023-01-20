@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ftn.IsaProjekat.dto.AppointmentCancellationDTO;
+import ftn.IsaProjekat.dto.AppointmentSearchDTO;
+import ftn.IsaProjekat.dto.AvailableClinicDTO;
 import ftn.IsaProjekat.dto.CreateAppointmentDTO;
 import ftn.IsaProjekat.dto.DonorAppointmentDTO;
 import ftn.IsaProjekat.dto.ScheduleAppointmentDTO;
@@ -50,9 +52,45 @@ public class AppointmentController {
 		}
 	}
 
+
+	@PreAuthorize("hasRole('ROLE_DONOR')")
+	@GetMapping( "/clinic/{id}")
+	public ResponseEntity<Set<DonorAppointmentDTO>> findAvailableAppointmentsByClinicId(@PathVariable Long id) {
+		Clinic clinic = clinicService.findById(id);
+		if (clinic == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		Set<DonorAppointmentDTO> appointments = appointmentService.findAvailableAppointmentsByClinicId(id);
+		return new ResponseEntity<>(appointments , HttpStatus.OK);
+	}	
+
+
+	@PreAuthorize("hasAnyRole('ROLE_DONOR')")
+	@PutMapping( "/schedule")
+	public ResponseEntity<Appointment> scheduleAppointment(@RequestBody ScheduleAppointmentDTO scheduleAppointmentDTO) {
+		Appointment scheduledAppointment = appointmentService.scheduleAppointment(scheduleAppointmentDTO);
+		if(scheduledAppointment == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(scheduledAppointment , HttpStatus.OK);		}
+
+
+	@PreAuthorize("hasRole('ROLE_DONOR')")
+	@PutMapping( "/cancel")
+	public ResponseEntity<Void> cancelAppointment(@RequestBody AppointmentCancellationDTO appointmentDTO) {
+		if(appointmentService.findById(appointmentDTO.getAppointmentId()) == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		if(!userDetailsService.currentUserIsValid(appointmentDTO.getDonorId())) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		if(appointmentService.cancelAppointment(appointmentDTO.getAppointmentId())) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 
-	
 
 
 

@@ -3,11 +3,15 @@ package ftn.IsaProjekat.service;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ftn.IsaProjekat.dto.AppointmentSearchDTO;
+import ftn.IsaProjekat.dto.AvailableClinicDTO;
 import ftn.IsaProjekat.dto.CreateAppointmentDTO;
 import ftn.IsaProjekat.dto.DonorAppointmentDTO;
 import ftn.IsaProjekat.dto.ScheduleAppointmentDTO;
@@ -65,7 +69,56 @@ public class AppointmentService {
     appointment.setTimeInterval(timeInterval);
     appointmentRepository.save(appointment);
     return true;
-}
+    }
 
+
+    public Set<DonorAppointmentDTO> findAvailableAppointmentsByClinicId(long id) {
+	Set<Appointment> appointments = appointmentRepository.findAvailableAppointmentsByClinicId(id);
+    Set<DonorAppointmentDTO> appointmentDTOs = AppointmentMapper.freeAppointmet(appointments);
+    return appointmentDTOs;
+    }
+
+    @Transactional(readOnly = false)
+    public Appointment scheduleAppointment(ScheduleAppointmentDTO scheduleAppointmentDTO){
+    Appointment appointment= appointmentRepository.findById(scheduleAppointmentDTO.getAppointmentId()).orElse(null);
+    Donor donor = donorRepository.findById(scheduleAppointmentDTO.getDonorId()).orElse(null);
+    LocalDate lastDonation = donor.getLastDonacion().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    if(appointment.getStatus().equals(AppointmentStatus.SCHEDULED) || (donor.getForm()==false) || (lastDonation.minusMonths(6).isBefore(LocalDate.now()))) {
+        return null;
+    }
+    appointment.setDonor(donor);
+    appointment.setStatus(AppointmentStatus.SCHEDULED);
+    Appointment savedAppointment = appointmentRepository.save(appointment);
+    if(savedAppointment != null) 
+        emailService.sendAppointmentScheduledNotification(EmailMapper.createEmailDTOfromAppointment(appointment));
+    return savedAppointment;
+    }
+
+
+    
+	public Boolean cancelAppointment(Long id) {
+		Appointment appointment = appointmentRepository.findById(id).orElse(null);
+		LocalDate appointmentStartDate = appointment.getTimeInterval().getStartTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		if(!appointmentStartDate.minusDays(1).isBefore(LocalDate.now())) {
+			addCancelledAppointmentToDonor(appointment);
+			appointment.setDonor(null);
+			appointment.setStatus(AppointmentStatus.AVAILABLE);
+			appointmentRepository.save(appointment);
+			return true;
+		}
+		return false;
+	}
+
+
+
+    private void addCancelledAppointmentToDonor(Appointment appointment) {
+		Donor donor = donorRepository.findById(appointment.getDonor().getId()).orElse(null);
+		CancelledAppointment cancelledAppointment = new CancelledAppointment(appointment);
+		cancelledAppointment.setStatus(AppointmentStatus.CANCELED);
+		donor.getCancelledAppointments().add(cancelledAppointment);
+		donorRepository.save(donor);
+	}
+
+    
 
 }

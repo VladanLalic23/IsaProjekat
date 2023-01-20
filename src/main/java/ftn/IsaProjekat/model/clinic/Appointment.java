@@ -13,42 +13,53 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-//import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import ftn.IsaProjekat.model.users.Donor;
 
 @Entity
-// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-// property = "id")
 @Table(name = "appointments")
-
 public class Appointment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "staff_id", nullable = false)
+	private long staffId;
+
     @Embedded
     private TimeInterval timeInterval;
 
     @Column
     @Enumerated(EnumType.STRING)
-    private AppointmentStatus type;
+    private AppointmentStatus status;
+
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL,optional = true)
+    private Donor donor;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Donor donor;
+	private Clinic clinic;
+
+    @Column(name = "loyaltyPoints", nullable =false)
+	private int loyaltyPoints;
 
     public Appointment() {
     }
 
-    public Appointment(long id, TimeInterval timeInterval, AppointmentStatus type, Donor donor) {
+
+    public Appointment(long id, long staffId, TimeInterval timeInterval, AppointmentStatus status, Donor donor, Clinic clinic, int loyaltyPoints) {
+        super();
         this.id = id;
+        this.staffId = staffId;
         this.timeInterval = timeInterval;
-        this.type = type;
+        this.status = status;
         this.donor = donor;
+        this.clinic = clinic;
+        this.loyaltyPoints = loyaltyPoints;
     }
+
 
     public long getId() {
         return id;
@@ -58,9 +69,6 @@ public class Appointment {
         this.id = id;
     }
 
-    public void setDonor(Donor donor) {
-        donor = donor;
-    }
 
     public TimeInterval getTimeInterval() {
         return this.timeInterval;
@@ -70,12 +78,45 @@ public class Appointment {
         this.timeInterval = timeInterval;
     }
 
-    public AppointmentStatus getType() {
-        return this.type;
+    public AppointmentStatus getStatus() {
+        return this.status;
     }
 
-    public void setType(AppointmentStatus type) {
-        this.type = type;
+
+    public long getStaffId() {
+        return this.staffId;
+    }
+
+    public void setStaffId(long staffId) {
+        this.staffId = staffId;
+    }
+
+    public Donor getDonor() {
+        return this.donor;
+    }
+
+    public void setDonor(Donor donor) {
+        this.donor = donor;
+    }
+
+    public Clinic getClinic() {
+        return this.clinic;
+    }
+
+    public void setClinic(Clinic clinic) {
+        this.clinic = clinic;
+    }
+
+    public int getLoyaltyPoints() {
+        return this.loyaltyPoints;
+    }
+
+    public void setLoyaltyPoints(int loyaltyPoints) {
+        this.loyaltyPoints = loyaltyPoints;
+    }
+
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
     }
 
 }
