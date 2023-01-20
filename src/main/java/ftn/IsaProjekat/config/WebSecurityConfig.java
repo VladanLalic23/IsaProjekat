@@ -65,7 +65,7 @@ public class WebSecurityConfig {
         	
 			.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
         	
-        	.authorizeRequests().antMatchers("/auth/**").permitAll().antMatchers("/h2-console/**").permitAll().antMatchers("/api/foo").permitAll()
+        	.authorizeRequests().antMatchers("/auth/**").permitAll()
 
         	.anyRequest().authenticated().and()
         	

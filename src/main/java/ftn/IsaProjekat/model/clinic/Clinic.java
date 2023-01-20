@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import ftn.IsaProjekat.model.users.Address;
-import ftn.IsaProjekat.model.users.ClinicAdmin;
+import ftn.IsaProjekat.model.users.Staff;
 
 @Entity
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
@@ -45,19 +45,25 @@ public class Clinic {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ClinicAdmin> clinicAdmins;
+	private Set<Staff> staffs;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Appointment> appointments ;
+
+
 
 
     public Clinic() {
     }
 
-    public Clinic(long id, String name, String description, double averageGrade, Address address, Set<ClinicAdmin> clinicAdmins) {
+    public Clinic(long id, String name, String description, double averageGrade, Address address, Set<Staff> staffs) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.averageGrade = averageGrade;
         this.address = address;
-        this.clinicAdmins = clinicAdmins;
+        this.staffs = staffs;
     }
 
 
@@ -101,12 +107,12 @@ public class Clinic {
     public void setAddress(Address address) {
         this.address = address;
     }
-     public Set<ClinicAdmin> getClinicAdmins() {
-        return this.clinicAdmins;
+     public Set<Staff> getStaffs() {
+        return this.staffs;
     }
 
-    public void setClinicAdmins(Set<ClinicAdmin> workers) {
-        this.clinicAdmins = workers;
+    public void setStaffs(Set<Staff> staffs) {
+        this.staffs = staffs;
     }
 
 

@@ -12,6 +12,8 @@ public class WebConfig implements WebMvcConfigurer{
 	//Enable CORS for avoiding @CrossOrigin annotation on every controller in application
 	@Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:7000").allowedMethods("GET","POST","PUT","DELETE","HEAD");
+        registry.addMapping("/**").allowedOrigins("http://localhost:7070").
+        allowedMethods("GET","POST","PUT","DELETE","HEAD").allowedHeaders("*");
+
     }
 }

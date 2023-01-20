@@ -15,9 +15,9 @@ import ftn.IsaProjekat.model.clinic.Clinic;
 import ftn.IsaProjekat.model.clinic.WorkingHours;
 
 @Entity
-@Table(name = "clinic_admin")
+@Table(name = "staffs")
 
-public class ClinicAdmin extends User {
+public class Staff extends User {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -26,5 +26,23 @@ public class ClinicAdmin extends User {
     @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<WorkingHours> workingHours;
+
+
+    public Clinic getClinic() {
+        return this.clinic;
+    }
+
+    public void setClinic(Clinic clinic) {
+        this.clinic = clinic;
+    }
+
+    public Set<WorkingHours> getWorkingHours() {
+        return this.workingHours;
+    }
+
+    public void setWorkingHours(Set<WorkingHours> workingHours) {
+        this.workingHours = workingHours;
+    }
+
 
 }
