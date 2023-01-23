@@ -15,10 +15,15 @@ public class ClinicService implements IClinicService{
     private ClinicRepository clinicRepository;
 
     @Override
-	public Clinic findById(Long id) {
-		Clinic clinic = clinicRepository.findById(id).orElse(null);		
-		return clinic;
+	public Clinic findById(Long id) {		
+		return clinicRepository.findById(id).orElse(null);
 	}
 
+	@Override
+	public Clinic findByName(String name) {	
+		return clinicRepository.findByName(name);
+	}
+    
+	
     
 }

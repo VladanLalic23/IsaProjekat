@@ -1,6 +1,7 @@
 package ftn.IsaProjekat.mappers;
 
 import ftn.IsaProjekat.dto.DonorDTO;
+import ftn.IsaProjekat.dto.DonorProfileDTO;
 import ftn.IsaProjekat.dto.UserRegistrationDTO;
 import ftn.IsaProjekat.model.users.Address;
 import ftn.IsaProjekat.model.users.Donor;
@@ -28,6 +29,10 @@ public class DonorMapper {
         donor.setJmbg(userRegistrationDTO.getjmbg());
         donor.setInfo(userRegistrationDTO.getInfo());
         donor.setProfession(userRegistrationDTO.getProfession());
+	}
+
+	public static DonorProfileDTO createDonorFromDonorProfileDTO(Donor donor) {
+		return new DonorProfileDTO(donor);
 	}
     
 }

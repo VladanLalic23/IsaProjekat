@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ftn.IsaProjekat.dto.DonorProfileDTO;
 import ftn.IsaProjekat.dto.UserRegistrationDTO;
 import ftn.IsaProjekat.mappers.DonorMapper;
 import ftn.IsaProjekat.model.users.Authority;
@@ -71,6 +72,16 @@ public class DonorService implements DonorInterface {
 		
 		return 	donorRepository.findByEmail(email);
 		
+	}
+
+	@Override
+	public DonorProfileDTO findDonorProfileInformation(long id) {
+		Donor donor = donorRepository.findById(id).orElseGet(null);
+		if(donor != null) {
+			DonorProfileDTO donorProfileDTO = DonorMapper.createDonorFromDonorProfileDTO(donor);
+			return donorProfileDTO;
+		}
+		return null;
 	}
     
 }
