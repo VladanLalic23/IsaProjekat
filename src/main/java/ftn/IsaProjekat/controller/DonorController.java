@@ -1,5 +1,7 @@
 package ftn.IsaProjekat.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +29,10 @@ public class DonorController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(donorProfileDTO, HttpStatus.OK);	
+    }
+
+	@GetMapping("form/{id}")
+    public void activateAccount(@PathVariable Long id, HttpServletResponse httpServletResponse) {
+      donorService.donorForm(id);
     }
 }

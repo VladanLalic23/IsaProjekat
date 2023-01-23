@@ -83,5 +83,11 @@ public class DonorService implements DonorInterface {
 		}
 		return null;
 	}
+
+	public void donorForm (long donorId){
+		Donor donor=donorRepository.getOne(donorId);
+		donor.setForm(true);
+		donorRepository.save(donor);
+	}
     
 }
