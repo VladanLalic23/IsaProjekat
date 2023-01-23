@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ftn.IsaProjekat.dto.AppointmentSearchDTO;
-import ftn.IsaProjekat.dto.AvailableClinicDTO;
+import ftn.IsaProjekat.dto.AvailableAppointmentDTO;
 import ftn.IsaProjekat.dto.CreateAppointmentDTO;
 import ftn.IsaProjekat.dto.DonorAppointmentDTO;
 import ftn.IsaProjekat.dto.ScheduleAppointmentDTO;
@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AppointmentService {
 
-
     @Autowired
     private AppointmentRepository appointmentRepository;
 
@@ -49,76 +48,92 @@ public class AppointmentService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private TimeIntervalService timeIntervalService;
 
-
-	public Appointment findById(Long id) {
-		return appointmentRepository.findById(id).orElse(null);
+    public Appointment findById(Long id) {
+        return appointmentRepository.findById(id).orElse(null);
     }
 
-    public boolean createAppointment(CreateAppointmentDTO appointmentDTO) throws ParseException {    
-    Staff staff=staffService.findById(appointmentDTO.getStaffId());
-    Clinic clinic=clinicService.findById(staff.getClinic().getId());
+    public boolean createAppointment(CreateAppointmentDTO appointmentDTO) throws ParseException {
+        Staff staff = staffService.findById(appointmentDTO.getStaffId());
+        Clinic clinic = clinicService.findById(staff.getClinic().getId());
 
-    TimeInterval timeInterval = new TimeInterval(appointmentDTO.getStartDate(),appointmentDTO.getEndDate());
-    Appointment appointment = new Appointment();
+        TimeInterval timeInterval = new TimeInterval(appointmentDTO.getStartDate(), appointmentDTO.getEndDate());
+        Appointment appointment = new Appointment();
 
-    appointment.setDonor(null);
-    appointment.setStaffId(appointmentDTO.getStaffId());
-    appointment.setStatus(AppointmentStatus.AVAILABLE);
-    appointment.setClinic(clinic);
-    appointment.setTimeInterval(timeInterval);
-    appointmentRepository.save(appointment);
-    return true;
+        appointment.setDonor(null);
+        appointment.setStaffId(appointmentDTO.getStaffId());
+        appointment.setStatus(AppointmentStatus.AVAILABLE);
+        appointment.setClinic(clinic);
+        appointment.setTimeInterval(timeInterval);
+        appointmentRepository.save(appointment);
+        return true;
     }
-
 
     public Set<DonorAppointmentDTO> findAvailableAppointmentsByClinicId(long id) {
-	Set<Appointment> appointments = appointmentRepository.findAvailableAppointmentsByClinicId(id);
-    Set<DonorAppointmentDTO> appointmentDTOs = AppointmentMapper.freeAppointmet(appointments);
-    return appointmentDTOs;
+        Set<Appointment> appointments = appointmentRepository.findAvailableAppointmentsByClinicId(id);
+        Set<DonorAppointmentDTO> appointmentDTOs = AppointmentMapper.freeAppointmet(appointments);
+        return appointmentDTOs;
     }
 
     @Transactional(readOnly = false)
-    public Appointment scheduleAppointment(ScheduleAppointmentDTO scheduleAppointmentDTO){
-    Appointment appointment= appointmentRepository.findById(scheduleAppointmentDTO.getAppointmentId()).orElse(null);
-    Donor donor = donorRepository.findById(scheduleAppointmentDTO.getDonorId()).orElse(null);
-    LocalDate lastDonation = donor.getLastDonacion().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    if(appointment.getStatus().equals(AppointmentStatus.SCHEDULED) || (donor.getForm()==false) || (lastDonation.minusMonths(6).isBefore(LocalDate.now()))) {
-        return null;
+    public Appointment scheduleAppointment(ScheduleAppointmentDTO scheduleAppointmentDTO) {
+        Appointment appointment = appointmentRepository.findById(scheduleAppointmentDTO.getAppointmentId())
+                .orElse(null);
+        Donor donor = donorRepository.findById(scheduleAppointmentDTO.getDonorId()).orElse(null);
+        LocalDate lastDonation = donor.getLastDonacion().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (appointment.getStatus().equals(AppointmentStatus.SCHEDULED) || (donor.getForm() == false)
+                || (lastDonation.minusMonths(6).isBefore(LocalDate.now()))) {
+            return null;
+        }
+        appointment.setDonor(donor);
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        if (savedAppointment != null)
+            emailService.sendAppointmentScheduledNotification(EmailMapper.createEmailDTOfromAppointment(appointment));
+        return savedAppointment;
     }
-    appointment.setDonor(donor);
-    appointment.setStatus(AppointmentStatus.SCHEDULED);
-    Appointment savedAppointment = appointmentRepository.save(appointment);
-    if(savedAppointment != null) 
-        emailService.sendAppointmentScheduledNotification(EmailMapper.createEmailDTOfromAppointment(appointment));
-    return savedAppointment;
+
+    public Boolean cancelAppointment(Long id) {
+        Appointment appointment = appointmentRepository.findById(id).orElse(null);
+        LocalDate appointmentStartDate = appointment.getTimeInterval().getStartTime().toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate();
+        if (!appointmentStartDate.minusDays(1).isBefore(LocalDate.now())) {
+            addCancelledAppointmentToDonor(appointment);
+            appointment.setDonor(null);
+            appointment.setStatus(AppointmentStatus.AVAILABLE);
+            appointmentRepository.save(appointment);
+            return true;
+        }
+        return false;
     }
-
-
-    
-	public Boolean cancelAppointment(Long id) {
-		Appointment appointment = appointmentRepository.findById(id).orElse(null);
-		LocalDate appointmentStartDate = appointment.getTimeInterval().getStartTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		if(!appointmentStartDate.minusDays(1).isBefore(LocalDate.now())) {
-			addCancelledAppointmentToDonor(appointment);
-			appointment.setDonor(null);
-			appointment.setStatus(AppointmentStatus.AVAILABLE);
-			appointmentRepository.save(appointment);
-			return true;
-		}
-		return false;
-	}
-
-
 
     private void addCancelledAppointmentToDonor(Appointment appointment) {
-		Donor donor = donorRepository.findById(appointment.getDonor().getId()).orElse(null);
-		CancelledAppointment cancelledAppointment = new CancelledAppointment(appointment);
-		cancelledAppointment.setStatus(AppointmentStatus.CANCELED);
-		donor.getCancelledAppointments().add(cancelledAppointment);
-		donorRepository.save(donor);
-	}
+        Donor donor = donorRepository.findById(appointment.getDonor().getId()).orElse(null);
+        CancelledAppointment cancelledAppointment = new CancelledAppointment(appointment);
+        cancelledAppointment.setStatus(AppointmentStatus.CANCELED);
+        donor.getCancelledAppointments().add(cancelledAppointment);
+        donorRepository.save(donor);
+    }
 
-    
+    public Set<AvailableAppointmentDTO> getAvailableAppointmentsFromTimeInterval(TimeInterval timeInterval) {
+        Set<Appointment> availableAppointments = appointmentRepository.findAvailableAppointments();
+        Set<AvailableAppointmentDTO> availableAppointmentsInTime = new HashSet<AvailableAppointmentDTO>();
+        Date startIntervall = timeIntervalService.formatDate(timeInterval.getStartTime());
+        Date endIntervall = timeIntervalService.formatDate(timeInterval.getEndTime());
 
-}
+        for (Appointment proba : availableAppointments) {
+            Date startAppointment = timeIntervalService.formatDate(proba.getTimeInterval().getStartTime());
+            Date endAppointment = timeIntervalService.formatDate(proba.getTimeInterval().getEndTime());
+            if(startAppointment.after(startIntervall) && endAppointment.before(endIntervall)){
+                AvailableAppointmentDTO av = new AvailableAppointmentDTO(proba);
+                availableAppointmentsInTime.add(av);
+            }
+
+        }
+        return availableAppointmentsInTime;
+
+    }
+
+}   

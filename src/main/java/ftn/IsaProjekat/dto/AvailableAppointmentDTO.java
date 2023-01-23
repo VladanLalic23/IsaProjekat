@@ -9,7 +9,6 @@ public class AvailableAppointmentDTO {
 	private int loyaltyPoints;
 	private Date startTime;
 	private Date endTime;
-	private double price;
 
 
 	public AvailableAppointmentDTO() {
@@ -47,13 +46,6 @@ public class AvailableAppointmentDTO {
 		this.endTime = endTime;
 	}
 
-	public double getPrice() {
-		return this.price;
-	}
-
-	public void setPrice(double price) {
-		this.price = price;
-	}
 
 
 

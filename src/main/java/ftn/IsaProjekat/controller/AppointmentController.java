@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ftn.IsaProjekat.dto.AppointmentCancellationDTO;
 import ftn.IsaProjekat.dto.AppointmentSearchDTO;
-import ftn.IsaProjekat.dto.AvailableClinicDTO;
+import ftn.IsaProjekat.dto.AvailableAppointmentDTO;
 import ftn.IsaProjekat.dto.CreateAppointmentDTO;
 import ftn.IsaProjekat.dto.DonorAppointmentDTO;
 import ftn.IsaProjekat.dto.ScheduleAppointmentDTO;
 import ftn.IsaProjekat.model.clinic.Appointment;
 import ftn.IsaProjekat.model.clinic.Clinic;
+import ftn.IsaProjekat.model.clinic.TimeInterval;
 import ftn.IsaProjekat.service.AppointmentService;
 import ftn.IsaProjekat.service.ClinicService;
 import ftn.IsaProjekat.service.UserService;
@@ -90,6 +91,19 @@ public class AppointmentController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@PreAuthorize("hasRole('ROLE_DONOR')")
+	@GetMapping( "/find-available-by-time")
+	public ResponseEntity<Set<AvailableAppointmentDTO>> getAvailableAppointmentsFromTimeInterval(@RequestBody TimeInterval timeInterval){
+		Set<AvailableAppointmentDTO> apps = appointmentService.getAvailableAppointmentsFromTimeInterval(timeInterval);
+		if(apps == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(apps , HttpStatus.OK);
+
+		}
+
+	}
 
 
 
@@ -102,4 +116,4 @@ public class AppointmentController {
 
 
     
-}
+
