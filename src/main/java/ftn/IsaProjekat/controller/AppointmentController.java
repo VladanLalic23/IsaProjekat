@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ftn.IsaProjekat.dto.AppointmentCancellationDTO;
-import ftn.IsaProjekat.dto.AppointmentSearchDTO;
 import ftn.IsaProjekat.dto.AvailableAppointmentDTO;
 import ftn.IsaProjekat.dto.CreateAppointmentDTO;
 import ftn.IsaProjekat.dto.DonorAppointmentDTO;
@@ -23,6 +22,7 @@ import ftn.IsaProjekat.dto.ScheduleAppointmentDTO;
 import ftn.IsaProjekat.model.clinic.Appointment;
 import ftn.IsaProjekat.model.clinic.Clinic;
 import ftn.IsaProjekat.model.clinic.TimeInterval;
+import ftn.IsaProjekat.model.users.User;
 import ftn.IsaProjekat.service.AppointmentService;
 import ftn.IsaProjekat.service.ClinicService;
 import ftn.IsaProjekat.service.UserService;
@@ -103,8 +103,32 @@ public class AppointmentController {
 
 		}
 
+	@PreAuthorize("hasRole('ROLE_DONOR')")
+	@GetMapping( "/past/{id}")
+	public ResponseEntity<Set<Appointment>> findPastAppointmentsByDonorId(@PathVariable Long id) {
+		User user = userDetailsService.findById(id);
+		if (user == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}else if(!userDetailsService.currentUserIsValid(id)) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		Set <Appointment> appointments = appointmentService.findPastAppointmentsByDonorId(id);
+		return new ResponseEntity<>(appointments , HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_DONOR')")
+	@GetMapping( "/scheduled/{id}")
+	public ResponseEntity<Set<Appointment>> findScheduledAppointmentsByDonorId(@PathVariable Long id) {
+		User user = userDetailsService.findById(id);
+		if (user == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}else if(!userDetailsService.currentUserIsValid(id)) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		Set <Appointment> appointments = appointmentService.findScheduledAppointmentsByDonorId(id);
+		return new ResponseEntity<>(appointments , HttpStatus.OK);
+	}
+}
 
 
 

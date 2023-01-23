@@ -30,7 +30,7 @@ public class Complaint {
 	private ComplaintType type;
 
 	@Column(name = "complaineeId", nullable = false)
-	private int complaineeId;
+	private Long complaineeId;
 
 	@Column
 	private Boolean answered;
@@ -39,7 +39,7 @@ public class Complaint {
 
 	}
 
-	public Complaint(long id, Donor donor, String complaintText, ComplaintType type, int complaineeId,
+	public Complaint(long id, Donor donor, String complaintText, ComplaintType type, Long complaineeId,
 			Boolean answered) {
 		super();
 		this.id = id;
@@ -83,11 +83,11 @@ public class Complaint {
 		this.type = type;
 	}
 
-	public int getComplaineeId() {
+	public Long getComplaineeId() {
 		return this.complaineeId;
 	}
 
-	public void setComplaineeId(int complaineeId) {
+	public void setComplaineeId(Long complaineeId) {
 		this.complaineeId = complaineeId;
 	}
 
@@ -103,34 +103,5 @@ public class Complaint {
 		this.answered = answered;
 	}
 
-	public Complaint id(long id) {
-		setId(id);
-		return this;
-	}
-
-	public Complaint donor(Donor donor) {
-		setDonor(donor);
-		return this;
-	}
-
-	public Complaint complaintText(String complaintText) {
-		setComplaintText(complaintText);
-		return this;
-	}
-
-	public Complaint type(ComplaintType type) {
-		setType(type);
-		return this;
-	}
-
-	public Complaint complaineeId(int complaineeId) {
-		setComplaineeId(complaineeId);
-		return this;
-	}
-
-	public Complaint answered(Boolean answered) {
-		setAnswered(answered);
-		return this;
-	}
 
 }

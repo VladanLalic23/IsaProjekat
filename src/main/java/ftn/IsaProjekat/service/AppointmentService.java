@@ -10,7 +10,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ftn.IsaProjekat.dto.AppointmentSearchDTO;
 import ftn.IsaProjekat.dto.AvailableAppointmentDTO;
 import ftn.IsaProjekat.dto.CreateAppointmentDTO;
 import ftn.IsaProjekat.dto.DonorAppointmentDTO;
@@ -135,5 +134,15 @@ public class AppointmentService {
         return availableAppointmentsInTime;
 
     }
+
+    
+
+	public Set<Appointment> findPastAppointmentsByDonorId(Long id) {
+		return appointmentRepository.findPastAppointmentsByDonorId(id);
+	}
+    
+	public Set<Appointment> findScheduledAppointmentsByDonorId(Long id) {
+		return appointmentRepository.findScheduledAppointmentsByDonorId(id);
+	}
 
 }   
