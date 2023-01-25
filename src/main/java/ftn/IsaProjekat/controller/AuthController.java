@@ -7,6 +7,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 
 import ftn.IsaProjekat.dto.UserRegistrationDTO;
@@ -29,9 +29,9 @@ import ftn.IsaProjekat.security.TokenUtils;
 import ftn.IsaProjekat.security.auth.JwtAuthenticationRequest;
 import ftn.IsaProjekat.service.DonorService;
 
-
 @RestController
-@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/auth")
+@CrossOrigin(origins ="http://localhost:8080")
 public class AuthController {
  
     @Autowired
@@ -43,6 +43,7 @@ public class AuthController {
     @Autowired
     TokenUtils tokenUtils;
 
+  
     @PostMapping("/register")
     public ResponseEntity<String> addUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
 		try {
