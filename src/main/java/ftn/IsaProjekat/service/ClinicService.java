@@ -1,5 +1,7 @@
 package ftn.IsaProjekat.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,13 @@ public class ClinicService implements IClinicService{
 	@Override
 	public Clinic findByName(String name) {	
 		return clinicRepository.findByName(name);
+	}
+
+	@Override
+	public List<Clinic> findAll() {
+		List<Clinic> clinics = clinicRepository.findAll();
+
+		return clinics;
 	}
     
 	
