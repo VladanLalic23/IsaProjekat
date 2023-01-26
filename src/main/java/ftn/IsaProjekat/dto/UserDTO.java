@@ -14,13 +14,15 @@ public class UserDTO {
 	private int flatNumber;
 	private String streetName;
 	private String phoneNumber;
+    private String profession;
+    private String info;
 
 
     public UserDTO() {
     }
 
 
-    public UserDTO(Long id, String name, String surname, String country, String city, String postalCode, int streetNumber, int flatNumber, String streetName, String phoneNumber) {
+    public UserDTO(Long id, String name, String surname, String country, String city, String postalCode, int streetNumber, int flatNumber, String streetName, String phoneNumber, String profession, String info) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -31,14 +33,17 @@ public class UserDTO {
         this.flatNumber = flatNumber;
         this.streetName = streetName;
         this.phoneNumber = phoneNumber;
+        this.profession = profession;
+        this.info = info;
     }
 
+   
     public UserDTO(User user) {
 		this(user.getId(), user.getName(), 
 				user.getSurname(), user.getAddress().getCountry(), user.getAddress().getCity(),
 				user.getAddress().getPostalCode(), user.getAddress().getStreetNumber(),
 				user.getAddress().getFlatNumber(), user.getAddress().getStreetName(), 
-				user.getPhone());
+				user.getPhone(), user.getProfession(), user.getInfo());
 	}
 
 
@@ -120,6 +125,22 @@ public class UserDTO {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getProfession() {
+        return this.profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public String getInfo() {
+        return this.info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
     
 }
