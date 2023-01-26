@@ -35,12 +35,16 @@ public class Complaint {
 	@Column
 	private Boolean answered;
 
+	@Column
+	private String answerText;
+
+
 	public Complaint() {
 
 	}
 
 	public Complaint(long id, Donor donor, String complaintText, ComplaintType type, Long complaineeId,
-			Boolean answered) {
+			Boolean answered,String answerText) {
 		super();
 		this.id = id;
 		this.donor = donor;
@@ -48,6 +52,7 @@ public class Complaint {
 		this.type = type;
 		this.complaineeId = complaineeId;
 		this.answered = answered;
+		this.answerText= answerText;
 
 	}
 
@@ -101,6 +106,15 @@ public class Complaint {
 
 	public void setAnswered(Boolean answered) {
 		this.answered = answered;
+	}
+
+
+	public String getAnswerText() {
+		return this.answerText;
+	}
+
+	public void setAnswerText(String answerText) {
+		this.answerText = answerText;
 	}
 
 

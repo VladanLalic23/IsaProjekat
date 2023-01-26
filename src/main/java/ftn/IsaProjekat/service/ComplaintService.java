@@ -1,5 +1,8 @@
 package ftn.IsaProjekat.service;
 
+
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,16 @@ public class ComplaintService {
 		complaint.setDonor(donor);
 	
 		return complaintRepository.save(complaint);
+	}
+
+	public Set<Complaint> findAllUnanswered() {
+		Set<Complaint> complaints = complaintRepository.findAllUnanswered();
+
+		return complaints;
+	}
+
+	public Complaint findById(Long id) {
+		return complaintRepository.findById(id).orElse(null);
 	}
 
 

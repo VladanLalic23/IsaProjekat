@@ -1,5 +1,6 @@
 package ftn.IsaProjekat.dto;
 
+import ftn.IsaProjekat.model.clinic.Complaint;
 import ftn.IsaProjekat.model.clinic.ComplaintType;
 
 public class ComplaintDTO {
@@ -24,6 +25,14 @@ public class ComplaintDTO {
         this.complaintText = complaintText;
         this.complaintType = complaintType;
     }
+
+    public ComplaintDTO(Complaint complaint) {
+        this.complaintId= complaint.getId();
+        this.donorId=complaint.getDonor().getId();
+        this.complaineeId=complaint.getComplaineeId();
+        this.complaintText=complaint.getComplaintText();
+        this.complaintType=complaint.getType();
+	}
 
 
 
