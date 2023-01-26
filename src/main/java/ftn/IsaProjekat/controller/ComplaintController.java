@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import ftn.IsaProjekat.dto.ComplaintDTO;
 import ftn.IsaProjekat.mappers.ComplaintMapper;
 import ftn.IsaProjekat.mappers.EmailMapper;
 import ftn.IsaProjekat.model.clinic.Complaint;
+import ftn.IsaProjekat.model.users.User;
 import ftn.IsaProjekat.repository.ComplaintRepository;
 import ftn.IsaProjekat.service.ComplaintService;
 import ftn.IsaProjekat.service.EmailService;
@@ -71,6 +73,27 @@ public class ComplaintController {
 		emailService.sendAnswerNotification(EmailMapper.createEmailDTOfromComplaint(complaint));
 
         return new ResponseEntity<>(ComplaintMapper.ComplaintToComplaintDTO(complaint), HttpStatus.OK);
+	}
+
+
+	@PreAuthorize("hasRole('ROLE_DONOR')")
+	@GetMapping( "/history/{id}")
+	public ResponseEntity<Set<ComplaintDTO>> findComplaintsByDonorId(@PathVariable Long id) {
+		User user = userDetailsService.findById(id);
+		if (user == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}else if(!userDetailsService.currentUserIsValid(id)) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		Set <ComplaintDTO> appointments = complaintService.findComplaintsByDonorId(id);
+		return new ResponseEntity<>(appointments , HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping( "/answered")
+	public ResponseEntity<Set<ComplaintDTO>> findAnswredComplaints() {
+		Set <ComplaintDTO> appointments = complaintService.findAnswredComplaints();
+		return new ResponseEntity<>(appointments , HttpStatus.OK);
 	}
     
 }

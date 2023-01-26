@@ -8,8 +8,8 @@ public class ComplaintDTO {
     private Long donorId;
 	private Long complaineeId;
 	private String complaintText;
-
     private ComplaintType complaintType;
+    private String answerText;
 
 
 
@@ -18,12 +18,13 @@ public class ComplaintDTO {
 
 
     
-    public ComplaintDTO(Long complaintId, Long donorId, Long complaineeId, String complaintText, ComplaintType complaintType) {
+    public ComplaintDTO(Long complaintId, Long donorId, Long complaineeId, String complaintText, ComplaintType complaintType, String answerText) {
         this.complaintId = complaintId;
         this.donorId = donorId;
         this.complaineeId = complaineeId;
         this.complaintText = complaintText;
         this.complaintType = complaintType;
+        this.answerText= answerText;
     }
 
     public ComplaintDTO(Complaint complaint) {
@@ -32,11 +33,18 @@ public class ComplaintDTO {
         this.complaineeId=complaint.getComplaineeId();
         this.complaintText=complaint.getComplaintText();
         this.complaintType=complaint.getType();
+        this.answerText=complaint.getAnswerText();
 	}
 
 
 
+    public String getAnswerText() {
+        return this.answerText;
+    }
 
+    public void setAnswerText(String answerText) {
+        this.answerText = answerText;
+    }
 
 
     public ComplaintType getComplaintType() {

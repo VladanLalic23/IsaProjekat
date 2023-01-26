@@ -45,7 +45,13 @@ public class ComplaintService {
 		return complaintRepository.findById(id).orElse(null);
 	}
 
+	public Set<ComplaintDTO> findComplaintsByDonorId(Long id) {
+		return complaintRepository.findComplaintsByDonorId(id);
+	}
 
+	public Set<ComplaintDTO> findAnswredComplaints() {
+		return complaintRepository.findAnswredComplaints();
+	}
 
     
 }
