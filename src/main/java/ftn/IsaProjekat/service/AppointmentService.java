@@ -86,7 +86,8 @@ public class AppointmentService {
         Donor donor = donorRepository.findById(scheduleAppointmentDTO.getDonorId()).orElse(null);
         System.out.print(donor.getLastDonacion());
         LocalDate lastDonation = donor.getLastDonacion().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        if (appointment.getStatus().equals(AppointmentStatus.SCHEDULED) || (donor.getForm() == false) ) {
+        LocalDate startTime = appointment.getTimeInterval().getStartTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (appointment.getStatus().equals(AppointmentStatus.SCHEDULED) ||  (donor.getForm() == false) ||  (!lastDonation.isBefore(startTime.minusMonths(6)))) {
             return null;
         }
         appointment.setDonor(donor);
