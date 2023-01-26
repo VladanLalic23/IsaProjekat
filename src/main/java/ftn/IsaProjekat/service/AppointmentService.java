@@ -10,10 +10,14 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ftn.IsaProjekat.dto.AppointmentDTO;
+import ftn.IsaProjekat.dto.AppointmentSearchDTO;
 import ftn.IsaProjekat.dto.AvailableAppointmentDTO;
+import ftn.IsaProjekat.dto.AvailableClinicDTO;
 import ftn.IsaProjekat.dto.CreateAppointmentDTO;
 import ftn.IsaProjekat.dto.DonorAppointmentDTO;
 import ftn.IsaProjekat.dto.ScheduleAppointmentDTO;
+import ftn.IsaProjekat.dto.SearchDTO;
 import ftn.IsaProjekat.mappers.AppointmentMapper;
 import ftn.IsaProjekat.mappers.EmailMapper;
 import ftn.IsaProjekat.model.clinic.Appointment;
@@ -78,12 +82,11 @@ public class AppointmentService {
 
     @Transactional(readOnly = false)
     public Appointment scheduleAppointment(ScheduleAppointmentDTO scheduleAppointmentDTO) {
-        Appointment appointment = appointmentRepository.findById(scheduleAppointmentDTO.getAppointmentId())
-                .orElse(null);
+		Appointment appointment= appointmentRepository.findById(scheduleAppointmentDTO.getAppointmentId()).orElse(null);
         Donor donor = donorRepository.findById(scheduleAppointmentDTO.getDonorId()).orElse(null);
+        System.out.print(donor.getLastDonacion());
         LocalDate lastDonation = donor.getLastDonacion().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        if (appointment.getStatus().equals(AppointmentStatus.SCHEDULED) || (donor.getForm() == false)
-                || (lastDonation.minusMonths(6).isBefore(LocalDate.now()))) {
+        if (appointment.getStatus().equals(AppointmentStatus.SCHEDULED) || (donor.getForm() == false) ) {
             return null;
         }
         appointment.setDonor(donor);
@@ -135,14 +138,55 @@ public class AppointmentService {
 
     }
 
+    private Set<Clinic> findFreeClinic(Set<Appointment> appointments) {
+		Set<Clinic> clinics = new HashSet<Clinic>();
+		for(Appointment appointment : appointments) {
+			clinics.add(appointment.getClinic());
+		}
+		return clinics;
+	}
+
     
 
-	public Set<Appointment> findPastAppointmentsByDonorId(Long id) {
+	public Set<AppointmentDTO> findPastAppointmentsByDonorId(Long id) {
 		return appointmentRepository.findPastAppointmentsByDonorId(id);
 	}
     
-	public Set<Appointment> findScheduledAppointmentsByDonorId(Long id) {
+	public Set<AppointmentDTO> findScheduledAppointmentsByDonorId(Long id) {
 		return appointmentRepository.findScheduledAppointmentsByDonorId(id);
 	}
+
+
+    public Set<AvailableClinicDTO> findAvailableClinics(AppointmentSearchDTO searchDTO) {
+		Set<Appointment> availableAppointments = findAvailableClinicByDate(searchDTO.getAppointmentTime());
+		Set<Clinic> clinic = findFreeClinic(findAvailableClinicByDate(searchDTO.getAppointmentTime()));
+		return createAvailableClinicDTOs(clinic, availableAppointments);
+	}
+
+    public Set<Appointment> findAvailableClinicByDate(Date appointmentTime) {
+		return appointmentRepository.findAvailableClinicByDate(appointmentTime);
+	}
+
+
+    private Set<AvailableClinicDTO> createAvailableClinicDTOs(Set<Clinic> clinics, Set<Appointment> availableAppointments){
+		Set<AvailableClinicDTO> availableClinicsDTOs = new HashSet<AvailableClinicDTO>();
+		for(Clinic clinic : clinics) {
+			AvailableClinicDTO clinicDTO= new AvailableClinicDTO();
+			clinicDTO.setClinicId(clinic.getId());
+			clinicDTO.setClinicName(clinic.getName());
+			clinicDTO.setClinicAverageGrade(clinic.getAverageGrade());
+			clinicDTO.setClinicAddress(clinic.getAddress().getStreetName() + " " + clinic.getAddress().getStreetNumber() + ", " + clinic.getAddress().getCity());
+			availableClinicsDTOs.add(clinicDTO);
+		}
+		return availableClinicsDTOs;
+	}
+
+
+    public Set<DonorAppointmentDTO> findAvailableClinicIdAndDate(SearchDTO searchDTO) {
+		Set<Appointment> appointments = appointmentRepository.findAvailableClinicIdAndDate(searchDTO.getAppointmentTime(), searchDTO.getClinicId());
+		Set<DonorAppointmentDTO> appointmentDTOs = AppointmentMapper.appointmentSetToDonorAppointmentDTOSet(appointments);
+		return appointmentDTOs;
+	}
+
 
 }   

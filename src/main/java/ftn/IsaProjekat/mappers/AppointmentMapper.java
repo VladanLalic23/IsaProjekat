@@ -16,5 +16,13 @@ public class AppointmentMapper {
 		}
 		return appointmentDTOs;
 	}
+
+	public static Set<DonorAppointmentDTO> appointmentSetToDonorAppointmentDTOSet(Set<Appointment> appointments) {
+		Set<DonorAppointmentDTO> appointmentDTOs = new HashSet<DonorAppointmentDTO>();
+		for(Appointment appointment : appointments) {
+			appointmentDTOs.add(new DonorAppointmentDTO(appointment));
+		}
+		return appointmentDTOs;
+	}
     
 }

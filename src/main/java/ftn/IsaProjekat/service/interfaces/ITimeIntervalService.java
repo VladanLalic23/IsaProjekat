@@ -1,10 +1,7 @@
 package ftn.IsaProjekat.service.interfaces;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
-import ftn.IsaProjekat.model.clinic.TimeInterval;
 
 public interface ITimeIntervalService {
     

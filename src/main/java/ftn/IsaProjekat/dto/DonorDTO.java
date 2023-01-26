@@ -7,17 +7,19 @@ public class DonorDTO {
 	private String name;
 	private String surname;
 	private String email;
+    private boolean form;
 
 
     public DonorDTO() {
     }
 
-    public DonorDTO(long id, String name, String surname, String email) {
+    public DonorDTO(long id, String name, String surname, String email,boolean form) {
         super();
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
+        this.form=form;
     }
 
     public DonorDTO(User user) {
@@ -61,7 +63,17 @@ public class DonorDTO {
     }
 
 
+    public boolean isForm() {
+        return this.form;
+    }
 
+    public boolean getForm() {
+        return this.form;
+    }
+
+    public void setForm(boolean form) {
+        this.form = form;
+    }
 
     
 }
