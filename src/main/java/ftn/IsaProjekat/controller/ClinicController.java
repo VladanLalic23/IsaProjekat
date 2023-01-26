@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ftn.IsaProjekat.dto.ClinicDTO;
+import ftn.IsaProjekat.dto.ClinicProfileDTO;
 import ftn.IsaProjekat.mappers.ClinicMapper;
 import ftn.IsaProjekat.model.clinic.Clinic;
 import ftn.IsaProjekat.service.interfaces.IClinicService;
@@ -42,5 +43,14 @@ public class ClinicController {
 		return new ResponseEntity<>(ClinicMapper.createClinicDTOSetfromClinicList(allClinics), HttpStatus.OK);
 	}
 
-    
+    @GetMapping(value = "/find-by-staff/{id}")
+	public ResponseEntity<ClinicProfileDTO> findClinicProfileInfo(@PathVariable Long id){
+		ClinicProfileDTO cli = clinicService.findClinicProfileInformation(id);
+		if(cli!= null){
+            return new ResponseEntity<>(cli, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(cli, HttpStatus.BAD_REQUEST);
+	      
+    }
+
 }
