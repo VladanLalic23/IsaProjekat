@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import ftn.IsaProjekat.dto.ComplaintAnswerDTO;
 import ftn.IsaProjekat.dto.ComplaintDTO;
 import ftn.IsaProjekat.mappers.ComplaintMapper;
+import ftn.IsaProjekat.mappers.EmailMapper;
 import ftn.IsaProjekat.model.clinic.Complaint;
 import ftn.IsaProjekat.repository.ComplaintRepository;
 import ftn.IsaProjekat.service.ComplaintService;
+import ftn.IsaProjekat.service.EmailService;
 import ftn.IsaProjekat.service.UserService;
 
 @RestController
@@ -35,6 +37,9 @@ public class ComplaintController {
 
     @Autowired
     private ComplaintRepository complaintRepository;
+
+	@Autowired
+	private EmailService emailService;
 
     @PreAuthorize("hasRole('ROLE_DONOR')")
 	@PostMapping("/create")
@@ -62,7 +67,9 @@ public class ComplaintController {
 		}
 		ComplaintMapper.AnswerDTOToComplaint(answerDTO, complaint);
 		complaint = complaintRepository.save(complaint);
-		//poraditi na ovom
+		if (complaint != null)
+		emailService.sendAnswerNotification(EmailMapper.createEmailDTOfromComplaint(complaint));
+
         return new ResponseEntity<>(ComplaintMapper.ComplaintToComplaintDTO(complaint), HttpStatus.OK);
 	}
     

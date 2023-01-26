@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import ftn.IsaProjekat.dto.AppointmentSchedulingEmailDTO;
+import ftn.IsaProjekat.dto.ComplaintEmailDTO;
 import ftn.IsaProjekat.dto.UserRegistrationDTO;
 
 @Service
@@ -45,6 +46,19 @@ public class EmailService {
 		message.setText("Hello , you have successfully " +
 						"scheduled at: " + appointmentSchedulingEmailDTO.getClinicName() + ", "+ 
 						appointmentSchedulingEmailDTO.getClinicAdress() + ". Appointment start time: " + appointmentSchedulingEmailDTO.getStartTime());
+		javaMailSender.send(message);
+		System.out.println("Poslao sam mejl!");
+	}
+
+
+	@Async
+	public void sendAnswerNotification(ComplaintEmailDTO answerDTO) {
+		System.out.println("SENDING EMAIL...");
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(answerDTO.getDonorEmail());
+		message.setFrom(environment.getProperty("spring.mail.username"));
+		message.setSubject("Complaint answer notification - Podrzi Zivot");
+		message.setText(answerDTO.getAnswerText());
 		javaMailSender.send(message);
 		System.out.println("Poslao sam mejl!");
 	}

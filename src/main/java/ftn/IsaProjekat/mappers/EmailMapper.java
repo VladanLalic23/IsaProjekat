@@ -1,7 +1,9 @@
 package ftn.IsaProjekat.mappers;
 
 import ftn.IsaProjekat.dto.AppointmentSchedulingEmailDTO;
+import ftn.IsaProjekat.dto.ComplaintEmailDTO;
 import  ftn.IsaProjekat.model.clinic.Appointment;
+import ftn.IsaProjekat.model.clinic.Complaint;
 import ftn.IsaProjekat.model.users.Address;
 
 
@@ -16,4 +18,9 @@ public class EmailMapper {
 	private static String createAddressString(Address address) {
 		return address.getStreetName() + " " +address.getStreetNumber() + " " + address.getCity();
 	}
+
+	public static ComplaintEmailDTO createEmailDTOfromComplaint(Complaint complaint) {
+		return new ComplaintEmailDTO(complaint.getDonor().getEmail(),complaint.getAnswerText());
+	}
+	
 }
