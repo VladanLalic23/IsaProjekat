@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -21,8 +22,11 @@ import ftn.IsaProjekat.model.users.Donor;
 @Table(name = "appointments")
 public class Appointment {
 
+  
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "appointment_gen", sequenceName = "appointment_seq", initialValue = 50, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appointment_gen")
     private long id;
 
     @Column(name = "staff_id", nullable = false)
